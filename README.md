@@ -28,14 +28,17 @@ This project uses the following libraries:
 ## Installation
 
 1. Clone this repository:
+   
+```bash
+git clone https://github.com/Oh-JongJin/SCOGEN.git
+```
 
-git clone https://github.com/yourusername/ai-music-score-generator.git
-Copy
 2. Install the required libraries:
 
-  ```python
+  ```bash
   pip install -r requirements.txt
   ```
+
 ## Usage
 
 (Add a brief explanation of how to use the project here)
