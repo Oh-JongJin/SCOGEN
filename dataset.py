@@ -1,0 +1,2 @@
+class ScoreDataset:
+    pass

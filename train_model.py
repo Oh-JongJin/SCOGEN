@@ -19,7 +19,7 @@ def train():
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
-    dataset = ScoreDataset('path/to/dataset', transform=transform)
+    dataset = ScoreDataset('dataset path', transform=transform)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     # 모델 초기화
