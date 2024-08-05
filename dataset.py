@@ -6,6 +6,10 @@ from torchvision import transforms
 
 
 class ScoreDataset(Dataset):
+    """지정된 디렉토리에서 이미지 파일을 로드
+
+    각 이미지에 대해 변환(transform)을 적용하고, 관련 메타데이터를 반환
+    """
     def __init__(self, root_dir, transform=None):
         self.root_dir = root_dir
         self.transform = transform

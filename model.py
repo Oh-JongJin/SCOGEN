@@ -3,6 +3,8 @@ import torch.nn as nn
 
 
 class ScoreGenerator(nn.Module):
+    """120차원의 입력 (잠재 벡터 + 스타일 + 템포 + 키)을 받아 256x256 크기의 흑백 이미지를 생성
+    """
     def __init__(self):
         super(ScoreGenerator, self).__init__()
         self.model = nn.Sequential(
@@ -24,6 +26,8 @@ class ScoreGenerator(nn.Module):
 
 
 class ScoreDiscriminator(nn.Module):
+    """256x256 크기의 이미지를 입력으로 받아 해당 이미지가 진짜인지 가짜인지 판별
+    """
     def __init__(self):
         super(ScoreDiscriminator, self).__init__()
         self.model = nn.Sequential(
