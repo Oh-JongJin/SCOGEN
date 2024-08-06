@@ -53,7 +53,47 @@ git clone https://github.com/Oh-JongJin/SCOGEN.git
 
 ## Usage
 
-(...)
+To generate a music score using SCOGEN, follow these steps: 
+
+1. Ensure you have installed all required dependencies as mentioned in the Installation section. 
+
+
+
+2. Run the main script with your desired parameters:
+
+```bash
+python generate_score.py --style "classical" --tempo "moderate" --key "C major" --instrument "piano"
+```
+
+​	Available options:
+
+- `--style`: Choose from "**classical**", "**jazz**"
+- `--tempo`: Choose from "**slow**", "**moderate**", or "**fast**"
+- `--key`: Specify the key (e.g., "**C major**", "**A minor**")
+- `--instrument`: Specify the main instrument (currently only supports "**piano**")
+
+
+
+3. The generated score will be saved as a PNG image in the `output` directory.
+
+
+
+4. (*Optional*) To use the web interface for easier interaction:
+
+```bash
+python app.py
+```
+
+Then open your web browser and go to `http://localhost:5000`. Here you can input your preferences and generate scores through a user-friendly interface.
+
+
+
+5. To train the model on your own dataset:
+   ```bash
+   python train_model.py --data_dir "path/to/your/dataset" --epochs 100
+   ```
+
+   Make sure your dataset follows the structure specified in the 'Model Training' section.
 
 
 
