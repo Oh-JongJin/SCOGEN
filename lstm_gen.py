@@ -43,7 +43,7 @@ for i in os.listdir(filepath):
 # Helping function
 def extract_notes(file):
     notes = []
-    pick = None
+    # pick = None
     for j in file:
         songs = instrument.partitionByInstrument(j)
         for part in songs.parts:
@@ -60,3 +60,41 @@ def extract_notes(file):
 # Getting the list of notes as Corpus
 Corpus = extract_notes(all_midis)
 print("Total notes in all the Chopin midis in the dataset:", len(Corpus))
+
+
+def show(music):
+    display(Image(str(music.write("lily.png"))))
+
+
+def chords_n_notes(Snippet):
+    melody = []
+    offset = 0  # Incremental
+    for i in Snippet:
+        # If it is chord
+        if "." in i or i.isdigit():
+            chord_notes = i.split(".")  # Seperating the notes in chord
+            notes = []
+            for j in chord_notes:
+                inst_note = int(j)
+                note_snip = note.Note(inst_note)
+                notes.append(note_snip)
+                chord_snip = chord.Chord(notes)
+                chord_snip.offset = offset
+                melody.append(chord_snip)
+        # pattern is a note
+        else:
+            note_snip = note.Note(i)
+            note_snip.offset = offset
+            melody.append(note_snip)
+        # increase offset each iteration so that notes do not stack
+        offset += 1
+    melody_midi = stream.Stream(melody)
+    return melody_midi
+
+
+Melody_Snippet = chords_n_notes(Corpus[:100])
+show(Melody_Snippet)
+
+# To play audio or corpus
+print("Sample Audio From Data")
+IPython.display.Audio("../input/music-generated-lstm/Corpus_Snippet.wav")
