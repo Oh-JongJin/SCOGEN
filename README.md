@@ -24,14 +24,18 @@ The SCOGEN aims to create a deep learning model capable of generating sheet musi
 
 - **Python**: 3.10.6
 - **CUDA**: 11.8
-- **PyTorch**: 2.2.0
+- **Tensorflow**
+
+- **scikit-learn**
+
+- **pandas**
 
 - **Music21**: 9.1.0
-- **Pretty_midi**: 0.2.10
-- **Librosa**: 0.10.2.post1
-- **Pillow (PIL)**: 9.5.0
-- **NumPy**: 1.23.5
-- **Matplotlib**: 3.8.3
+- ~~**Pretty_midi**: 0.2.10~~
+- ~~**Librosa**: 0.10.2.post1~~
+- **Pillow**
+- **numPy**
+- **Matplotlib**
 
 
 
@@ -62,6 +66,14 @@ To generate a music score using SCOGEN, follow these steps:
 2. Run the main script with your desired parameters:
 
 ```bash
+python lstm_gen.py
+```
+
+...
+
+
+
+```bash
 python generate_score.py --style "classical" --tempo "moderate" --key "C major" --instrument "piano"
 ```
 
@@ -75,16 +87,6 @@ python generate_score.py --style "classical" --tempo "moderate" --key "C major" 
 
 
 3. The generated score will be saved as a PNG image in the `output` directory.
-
-
-
-4. (*Optional*) To use the web interface for easier interaction:
-
-```bash
-python app.py
-```
-
-Then open your web browser and go to `http://localhost:5000`. Here you can input your preferences and generate scores through a user-friendly interface.
 
 
 
@@ -125,3 +127,8 @@ This project is distributed under the MIT License.
 
 See `LICENSE` file for more information. 
 
+
+
+## Reference
+
+https://www.kaggle.com/code/karnikakapoor/music-generation-lstm
