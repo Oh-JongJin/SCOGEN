@@ -1,5 +1,11 @@
 # SCOGEN
-
+```
+      _/_/_/        _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/
+   _/            _/            _/    _/     _/             _/             _/_/    _/
+    _/_/        _/            _/    _/     _/  _/_/       _/_/_/         _/  _/  _/
+       _/      _/            _/    _/     _/    _/       _/             _/    _/_/
+_/_/_/          _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/
+```
 An innovative project that uses generative AI to create musical score images based on user input and musical characteristics.
 
 
