@@ -66,7 +66,7 @@ def create_model(input_shape, output_shape):
     return model
 
 
-def train_model(model, X_train, y_train, epochs=200, batch_size=256):
+def train_model(model, X_train, y_train, epochs=3000, batch_size=256):
     """Train the model"""
     return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
 
@@ -85,6 +85,20 @@ def generate_melody(model, seed, mapping, num_notes=100, sequence_length=40):
     return generated_notes
 
 
+def save_music_to_midi(melody, filename="generated_melody.mid"):
+    """Save generated melody to MIDI file"""
+    music_stream = stream.Stream()
+    for element in melody:
+        if '.' in element:  # It's a chord
+            chord_notes = element.split('.')
+            chord_obj = chord.Chord(chord_notes)
+            music_stream.append(chord_obj)
+        else:  # It's a note
+            n = note.Note(element)
+            music_stream.append(n)
+    music_stream.write('midi', fp=filename)
+
+
 def main():
     print("Load and preprocess data")
     filepath = "classical_music_midi/chopin/"
@@ -99,17 +113,24 @@ def main():
     model = create_model((X.shape[1], X.shape[2]), y.shape[1])
     history = train_model(model, X_train, y_train)
 
+    model.save('music_lstm_model.h5')
+    print("Model saved")
+
     # Visualize results
     plt.figure(figsize=(15, 4))
     plt.plot(history.history['loss'])
     plt.title("Model Loss")
     plt.ylabel("Loss")
     plt.xlabel("Epoch")
-    plt.show()
+    # plt.show()
+    plt.savefig("loss_graph.png")
+    plt.close()
 
     # Generate melody
     seed = X_seed[np.random.randint(0, len(X_seed) - 1)]
     generated_melody = generate_melody(model, seed, mapping)
+
+    save_music_to_midi(generated_melody)
 
     # Convert generated melody to MIDI (this part is omitted for simplification)
     print("Generated melody length:", len(generated_melody))
