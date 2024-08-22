@@ -133,9 +133,3 @@ python generate_score.py --style "classical" --tempo "moderate" --key "C major" 
 This project is distributed under the MIT License. 
 
 See `LICENSE` file for more information. 
-
-
-
-## Reference
-
-https://www.kaggle.com/code/karnikakapoor/music-generation-lstm
