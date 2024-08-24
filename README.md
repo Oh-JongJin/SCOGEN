@@ -32,15 +32,9 @@ The SCOGEN aims to create a deep learning model capable of generating sheet musi
 - **Python**: 3.10.6
 - **CUDA**: 11.8
 - **Tensorflow**
-
+- **keras**
 - **scikit-learn**
-
-- **pandas**
-
 - **Music21**: 9.1.0
-- ~~**Pretty_midi**: 0.2.10~~
-- ~~**Librosa**: 0.10.2.post1~~
-- **Pillow**
 - **numPy**
 - **Matplotlib**
 
