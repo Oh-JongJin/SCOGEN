@@ -66,7 +66,7 @@ def create_model(input_shape, output_shape):
     return model
 
 
-def train_model(model, X_train, y_train, epochs=3000, batch_size=256):
+def train_model(model, X_train, y_train, epochs=200, batch_size=256):
     """Train the model"""
     return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
 
