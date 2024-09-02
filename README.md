@@ -1,11 +1,11 @@
 # SCOGEN
 ```
-      _/_/_/        _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/           _/_/
-   _/            _/            _/    _/     _/             _/             _/_/    _/           _/  _/
-    _/_/        _/            _/    _/     _/  _/_/       _/_/_/         _/  _/  _/           _/    _/
-       _/      _/            _/    _/     _/    _/       _/             _/    _/_/         _/_/      _/
-_/_/_/          _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/       _/_/_/
-                                                                                        _/_/
+      _/_/_/        _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/         _/_/
+   _/            _/            _/    _/     _/             _/             _/_/    _/         _/  _/
+    _/_/        _/            _/    _/     _/  _/_/       _/_/_/         _/  _/  _/         _/    _/
+       _/      _/            _/    _/     _/    _/       _/             _/    _/_/       _/_/      _/
+_/_/_/          _/_/_/        _/_/         _/_/_/       _/_/_/_/       _/      _/     _/_/_/
+                                                                                      _/_/
 ```
 An innovative project that uses generative AI to create musical score images based on user input and musical characteristics.
 
@@ -70,33 +70,7 @@ To generate a music score using SCOGEN, follow these steps:
 python lstm_gen.py
 ```
 
-...
 
-
-
-```bash
-python generate_score.py --style "classical" --tempo "moderate" --key "C major" --instrument "piano"
-```
-
-​	Available options:
-
-- `--style`: Choose from "**classical**", "**jazz**"
-- `--tempo`: Choose from "**slow**", "**moderate**", or "**fast**"
-- `--key`: Specify the key (e.g., "**C major**", "**A minor**")
-- `--instrument`: Specify the main instrument (currently only supports "**piano**")
-
-
-
-3. The generated score will be saved as a PNG image in the `output` directory.
-
-
-
-5. To train the model on your own dataset:
-   ```bash
-   python train_model.py --data_dir "path/to/your/dataset" --epochs 100
-   ```
-
-   Make sure your dataset follows the structure specified in the 'Model Training' section.
 
 
 
