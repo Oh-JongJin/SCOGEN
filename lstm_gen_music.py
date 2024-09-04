@@ -69,25 +69,26 @@ def preprocess_data(notes, durations, sequence_length=40):
 def create_model(input_shape, not_output_shape, dur_output_shape):
     """Create LSTM model"""
     model = Sequential([
-        LSTM(256, input_shape=input_shape, return_sequences=True),
-        Dropout(0.3),
-        LSTM(128),
-        Dense(128, activation='relu'),
-        Dropout(0.3),
+        LSTM(512, input_shape=input_shape, return_sequences=True),
+        Dropout(0.1),
+        LSTM(256),
+        Dense(256, activation='relu'),
+        Dropout(0.1),
         Dense(not_output_shape + dur_output_shape, activation='softmax')
     ])
-    opt = Adamax(learning_rate=0.001)
-    model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+    opt = Adamax(learning_rate=0.01)
+    model.compile(loss='categorical_crossentropy', optimizer=opt)
     return model
 
 
-def train_model(model, X_train, y_train, epochs=200, batch_size=256):
+def train_model(model, X_train, y_train, epochs=2000, batch_size=256):
     """Train the model"""
     reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=0.00001)
     early_stopping = EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
 
-    return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs,
-                     callbacks=[reduce_lr, early_stopping])
+    # return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs,
+    #                  callbacks=[reduce_lr, early_stopping])
+    return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
 
 
 def generate_melody(model, seed_notes, seed_durs, note_mapping, dur_mapping, num_notes=100, sequence_length=40):
@@ -132,7 +133,7 @@ def main():
     print("Load and preprocess data")
     now = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    composer = 'chopin'
+    composer = 'schubert'
     filepath = f"classical_music_midi/{composer}/"
     midi_files = load_midi_files(filepath)
     notes, durations = extract_notes(midi_files)
