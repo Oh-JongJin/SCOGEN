@@ -81,7 +81,7 @@ def create_model(input_shape, not_output_shape, dur_output_shape):
     return model
 
 
-def train_model(model, X_train, y_train, epochs=2000, batch_size=256):
+def train_model(model, X_train, y_train, epochs=200, batch_size=256):
     """Train the model"""
     reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=0.00001)
     early_stopping = EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
@@ -133,7 +133,7 @@ def main():
     print("Load and preprocess data")
     now = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    composer = 'schubert'
+    composer = 'chopin'
     filepath = f"classical_music_midi/{composer}/"
     midi_files = load_midi_files(filepath)
     notes, durations = extract_notes(midi_files)
