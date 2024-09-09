@@ -6,8 +6,9 @@ from datetime import datetime
 from music21 import *
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Input
 from tensorflow.keras.optimizers import Adamax
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 
@@ -62,33 +63,46 @@ def preprocess_data(notes, durations, sequence_length=40):
     y_notes = tf.keras.utils.to_categorical(next_notes)
     y_durs = tf.keras.utils.to_categorical(next_durs)
 
-    return X_notes, X_durs, y_notes, y_durs, note_mapping, dur_mapping, len(note_symb), len(dur_symb)
+    # return X_notes, X_durs, y_notes, y_durs, note_mapping, dur_mapping, len(note_symb), len(dur_symb)
+
+    note_scaler = StandardScaler()
+    dur_scaler = StandardScaler()
+    X_notes = note_scaler.fit_transform(np.array(note_sequences).reshape(-1, 1)).reshape(len(note_sequences),
+                                                                                         sequence_length, 1)
+    X_durs = dur_scaler.fit_transform(np.array(dur_sequences).reshape(-1, 1)).reshape(len(dur_sequences),
+                                                                                      sequence_length, 1)
+    return X_notes, X_durs, y_notes, y_durs, note_mapping, dur_mapping, len(note_symb), len(dur_symb), note_scaler, dur_scaler
 
 
-# def create_model(input_shape, output_shape):
-def create_model(input_shape, not_output_shape, dur_output_shape):
+def create_model(input_shape, note_output_shape, dur_output_shape):
     """Create LSTM model"""
-    model = Sequential([
-        LSTM(512, input_shape=input_shape, return_sequences=True),
-        Dropout(0.1),
-        LSTM(256),
-        Dense(256, activation='relu'),
-        Dropout(0.1),
-        Dense(not_output_shape + dur_output_shape, activation='softmax')
-    ])
-    opt = Adamax(learning_rate=0.01)
-    model.compile(loss='categorical_crossentropy', optimizer=opt)
+    inputs = Input(shape=input_shape)
+    x = LSTM(512, return_sequences=True)(inputs)
+    x = Dropout(0.3)(x)
+    x = LSTM(256)(x)
+    x = Dense(256, activation='relu')(x)
+    x = Dropout(0.3)(x)
+
+    note_output = Dense(note_output_shape, activation='softmax', name='note_output')(x)
+    duration_output = Dense(dur_output_shape, activation='softmax', name='duration_output')(x)
+
+    model = Model(inputs=inputs, outputs=[note_output, duration_output])
+
+    opt = Adamax(learning_rate=0.001)
+    model.compile(loss={'note_output': 'categorical_crossentropy',
+                        'duration_output': 'categorical_crossentropy'},
+                  optimizer=opt)
     return model
 
 
-def train_model(model, X_train, y_train, epochs=200, batch_size=256):
+def train_model(model, X_train, y_train_notes, y_train_durs, epochs=200, batch_size=64):
     """Train the model"""
-    reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=3, min_lr=0.00001)
+    reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=5, min_lr=0.00001)
     early_stopping = EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
 
-    # return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs,
-    #                  callbacks=[reduce_lr, early_stopping])
-    return model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
+    return model.fit(X_train, {'note_output': y_train_notes, 'duration_output': y_train_durs},
+                     batch_size=batch_size, epochs=epochs,
+                     callbacks=[reduce_lr, early_stopping])
 
 
 def generate_melody(model, seed_notes, seed_durs, note_mapping, dur_mapping, num_notes=100, sequence_length=40):
@@ -100,11 +114,9 @@ def generate_melody(model, seed_notes, seed_durs, note_mapping, dur_mapping, num
 
     for _ in range(num_notes):
         seed = np.concatenate((seed_notes, seed_durs), axis=-1)
-        prediction = model.predict(seed.reshape(1, sequence_length, 2), verbose=0)[0]
-        note_pred = prediction[:len(note_mapping)]
-        dur_pred = prediction[len(note_mapping):]
-        note_index = np.argmax(note_pred)
-        dur_index = np.argmax(dur_pred)
+        note_pred, dur_pred = model.predict(seed.reshape(1, sequence_length, 2), verbose=0)
+        note_index = np.argmax(note_pred[0])
+        dur_index = np.argmax(dur_pred[0])
         generated_notes.append(reverse_note_mapping[note_index])
         generated_durs.append(reverse_dur_mapping[dur_index])
         seed_notes = np.append(seed_notes[1:], [[note_index / float(len(note_mapping))]], axis=0)
@@ -137,8 +149,7 @@ def main():
     filepath = f"classical_music_midi/{composer}/"
     midi_files = load_midi_files(filepath)
     notes, durations = extract_notes(midi_files)
-    X_notes, X_durs, y_notes, y_durs, note_mapping, dur_mapping, num_note_symbols, num_dur_symbols = (
-        preprocess_data(notes, durations))
+    X_notes, X_durs, y_notes, y_durs, note_mapping, dur_mapping, num_note_symbols, num_dur_symbols, note_scaler, dur_scaler = preprocess_data(notes, durations)
 
     print("Split training and seed data")
     X_train_notes, X_seed_notes, y_train_notes, y_seed_notes = train_test_split(X_notes, y_notes, test_size=0.2,
@@ -146,10 +157,11 @@ def main():
     X_train_durs, X_seed_durs, y_train_durs, y_seed_durs = train_test_split(X_durs, y_durs, test_size=0.2,
                                                                             random_state=42)
 
-    model = create_model((X_notes.shape[1], 2), y_notes.shape[1], y_durs.shape[1])
+    # model = create_model((X_notes.shape[1], 2), y_notes.shape[1], y_durs.shape[1])
     X_train = np.concatenate((X_train_notes, X_train_durs), axis=-1)
-    y_train = np.concatenate((y_train_notes, y_train_durs), axis=-1)
-    history = train_model(model, X_train, y_train)
+    model = create_model((X_train.shape[1], 2), y_train_notes.shape[1], y_train_durs.shape[1])
+    # y_train = np.concatenate((y_train_notes, y_train_durs), axis=-1)
+    history = train_model(model, X_train, y_train_notes, y_train_durs)
 
     model.save(f'music_lstm_model_{composer}_{now}.h5')
     print("Model saved")
