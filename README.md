@@ -95,9 +95,3 @@ python lstm_gen.py
 4. **High-Quality Image Generation**: Produce high-quality, visually appealing sheet music images.
 
 
-
-## License
-
-This project is distributed under the MIT License. 
-
-See `LICENSE` file for more information. 
